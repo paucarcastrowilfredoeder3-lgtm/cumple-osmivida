@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Feliz Cumpleaños mi amor 💖</title>
+  <link rel="stylesheet" href="birthday.css"/>
+</head>
+<body>
+
+  <!-- Canvas fuegos artificiales -->
+  <canvas id="fireworks"></canvas>
+
+  <!-- Música local (3:21) -->
+  <audio id="bdayMusic" src="musica.mp3" preload="auto" loop></audio>
+  <button class="music-fab" id="musicFab" onclick="toggleBdayMusic()" title="Música">🎵</button>
+
+  <!-- ══════════════════════════════════════
+        SECCIÓN 0: CUENTA REGRESIVA
+  ══════════════════════════════════════ -->
+  <section class="section s-countdown" id="sCountdown" style="display:none">
+    <div class="countdown-card">
+      <div class="cd-heart">💖</div>
+      <div class="cd-flowers">🌸 🌸 🌷 🌸 🌸</div>
+      <h2>Solo faltan</h2>
+      <div class="timer-grid">
+        <div class="time-box"><span id="cdDays">00</span><label>DÍAS</label></div>
+        <div class="time-box"><span id="cdHours">00</span><label>HRS</label></div>
+        <div class="time-box"><span id="cdMins">00</span><label>MIN</label></div>
+        <div class="time-box"><span id="cdSecs">00</span><label>SEG</label></div>
+      </div>
+      <p class="cd-sub">días para tu cumpleaños, mi amor 💖</p>
+      <p class="cd-date">21 · SEPTIEMBRE</p>
+      <div class="cd-dots">•••••</div>
+      <p class="cd-surprise">Tengo una sorpresa para ti</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+        SECCIÓN 1: INTRO NOMBRE LETRA X LETRA
+  ══════════════════════════════════════ -->
+  <section class="section s-intro" id="sIntro">
+    <div class="intro-overlay"></div>
+
+    <!-- Corazones de fondo -->
+    <div class="intro-hearts-bg" id="introHeartsBg"></div>
+
+    <div class="intro-stage">
+      <!-- Texto animado -->
+      <p class="intro-pre">✨ Hoy es tu día ✨</p>
+      <h1 class="intro-name" id="introName"></h1>
+      <p class="intro-post" id="introPost"></p>
+
+      <!-- Corazón grande SVG palpitando -->
+      <div class="big-heart-wrapper">
+        <div class="big-heart-glow"></div>
+        <div class="big-heart">
+          <svg width="110" height="100" viewBox="0 0 110 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="hg1" cx="35%" cy="28%" r="65%">
+                <stop offset="0%" stop-color="#ffaad4"/>
+                <stop offset="45%" stop-color="#ff3380"/>
+                <stop offset="100%" stop-color="#aa0044"/>
+              </radialGradient>
+            </defs>
+            <path d="M55 92 C55 92 5 58 5 30 C5 16 16 6 30 6 C40 6 50 13 55 20 C60 13 70 6 80 6 C94 6 105 16 105 30 C105 58 55 92 55 92Z" fill="url(#hg1)"/>
+            <ellipse cx="36" cy="24" rx="10" ry="6" fill="rgba(255,255,255,0.3)" transform="rotate(-30 36 24)"/>
+            <ellipse cx="28" cy="32" rx="5" ry="3" fill="rgba(255,255,255,0.18)" transform="rotate(-20 28 32)"/>
+          </svg>
+        </div>
+      </div>
+
+      <button class="btn-enter" id="btnEnter" onclick="goToMain()">
+        <span>Abrir tu regalo 💖</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+        SECCIÓN 2: CONTENIDO PRINCIPAL
+  ══════════════════════════════════════ -->
+  <section class="section s-main" id="sMain" style="display:none">
+
+    <!-- Partículas rosas de fondo -->
+    <div class="pink-particles" id="pinkParticles"></div>
+
+    <!-- Tulipanes decorativos flotando -->
+    <div class="deco-tulips" id="decoTulips"></div>
+
+    <div class="main-wrap">
+
+      <!-- ── TÍTULO ── -->
+      <div class="main-header reveal">
+        <div class="sparkle-row">
+          <span class="sparkle">✦</span>
+          <span class="sparkle">✦</span>
+          <span class="sparkle">✦</span>
+        </div>
+        <h2 class="main-title">¡Feliz Cumpleaños!</h2>
+        <p class="main-sub">mi amor 💖</p>
+        <p class="main-date">21 de Septiembre</p>
+      </div>
+
+      <!-- ── FOTO CON MARCO ROSA ── -->
+      <div class="photo-section reveal">
+        <div class="photo-outer-glow"></div>
+        <div class="photo-frame-rose">
+          <div class="petal-corner pc-tl">
+            <svg viewBox="0 0 40 40" width="40"><ellipse cx="20" cy="20" rx="10" ry="18" fill="#ff4d8d" opacity="0.85" transform="rotate(-40 20 20)"/><ellipse cx="20" cy="20" rx="8" ry="16" fill="#ff80b3" opacity="0.5" transform="rotate(-40 20 20)"/></svg>
+          </div>
+          <div class="petal-corner pc-tr">
+            <svg viewBox="0 0 40 40" width="40"><ellipse cx="20" cy="20" rx="10" ry="18" fill="#ff4d8d" opacity="0.85" transform="rotate(40 20 20)"/><ellipse cx="20" cy="20" rx="8" ry="16" fill="#ff80b3" opacity="0.5" transform="rotate(40 20 20)"/></svg>
+          </div>
+          <div class="petal-corner pc-bl">
+            <svg viewBox="0 0 40 40" width="40"><ellipse cx="20" cy="20" rx="10" ry="18" fill="#e91e8c" opacity="0.85" transform="rotate(140 20 20)"/></svg>
+          </div>
+          <div class="petal-corner pc-br">
+            <svg viewBox="0 0 40 40" width="40"><ellipse cx="20" cy="20" rx="10" ry="18" fill="#e91e8c" opacity="0.85" transform="rotate(-140 20 20)"/></svg>
+          </div>
+          <div class="frame-flower ff-t">🌸</div>
+          <div class="frame-flower ff-b">🌸</div>
+          <img src="iris.jpg" alt="mi amor" class="photo-img" onerror="this.src='iris.jpg.jpeg'"/>
+          <div class="photo-label">Mi amor 💖</div>
+        </div>
+      </div>
+
+      <!-- ── SOBRE CON CARTA ── -->
+      <div class="envelope-section reveal" id="envelopeSection">
+        <h3 class="section-title">Una carta para ti 💌</h3>
+        <div class="envelope-wrapper" id="envelopeWrapper" onclick="openEnvelope()">
+          <div class="envelope" id="envelope">
+            <div class="env-back"></div>
+            <div class="env-flap" id="envFlap"></div>
+            <div class="env-front">
+              <div class="env-seal" id="envSeal">💖</div>
+            </div>
+          </div>
+          <p class="env-tap-hint" id="envTapHint">Toca para abrir ✨</p>
+        </div>
+
+        <div class="letter-card" id="letterCard" style="display:none">
+          <div class="letter-inner">
+            <p class="letter-greeting">Mi bebé,</p>
+            <p>
+              Hoy es un día muy especial para ti.<br/>
+              Te amo mucho y quiero decirte lo importante<br/>
+              que te has convertido para mí.
+            </p>
+            <p>
+              Quiero que tu cumpleaños nunca pase como un día cualquiera,<br/>
+              sino que siempre sea un día especial para ti.
+            </p>
+            <p>
+              Deseo que cumplas todos tus objetivos,<br/>
+              que siempre estés feliz y pueda verte<br/>
+              siempre sonriendo, mi chinita hermosa.
+            </p>
+            <p>
+              Siempre te apoyaré en todo<br/>
+              y estaré para ti.
+            </p>
+            <p class="letter-sign">
+              Con todo mi amor 💖<br/>
+              <em>Att. Nerito</em> 🐻
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── VELA ── -->
+      <div class="candle-section reveal">
+        <h3 class="section-title">🎂 Sopla la vela y pide un deseo</h3>
+        <p class="candle-sub" id="candleHint">Activa el micrófono y sopla fuerte 🎤</p>
+        <div class="cake-wrapper">
+          <div class="candle-wrap">
+            <div class="flame-wrap" id="flameWrapper">
+              <div class="flame-outer"></div>
+              <div class="flame-inner"></div>
+              <div class="flame-core"></div>
+              <div class="flame-glow-halo"></div>
+            </div>
+            <div class="candle-body">
+              <div class="candle-stripe"></div>
+              <div class="candle-stripe"></div>
+              <div class="candle-stripe"></div>
+            </div>
+          </div>
+          <div class="cake-body">
+            <div class="cake-layer cake-l1">
+              <div class="cake-deco">
+                <span>🌸</span><span>💖</span><span>🌸</span>
+              </div>
+            </div>
+            <div class="cake-layer cake-l2">
+              <div class="cake-drip"></div>
+              <span class="cake-text-label">mi amor 💖</span>
+            </div>
+            <div class="cake-plate"></div>
+          </div>
+        </div>
+        <button class="mic-btn" id="micBtn" onclick="startBlowDetection()">
+          🎤 Activar micrófono
+        </button>
+        <div class="wish-msg" id="wishMessage" style="display:none">
+          <p>🌟 ¡Tu deseo fue escuchado por el universo!</p>
+          <p class="wish-sub">¡Que todos tus sueños se hagan realidad, amor!</p>
+        </div>
+      </div>
+
+      <!-- ── RAZONES ── -->
+      <div class="reasons-section reveal">
+        <h3 class="section-title">💕 Por qué te amo</h3>
+        <div class="reasons-grid" id="reasonsGrid"></div>
+      </div>
+
+      <!-- ── TULIPANES JARDÍN ── -->
+      <div class="tulip-field reveal">
+        <div class="tf-tulip" style="--d:0s;--h:70px">
+          <svg viewBox="0 0 28 38" width="28"><path d="M14 36C7 29 1 22 2 13 3 6 8 2 14 3c6-1 11 3 12 10 1 9-5 16-12 23z" fill="url(#tf1)"/><path d="M9 10C7 5 8 1 11 2c1 2 2 6 3 8z" fill="#ff80b3"/><path d="M19 10C21 5 20 1 17 2c-1 2-2 6-3 8z" fill="#ff80b3"/><defs><radialGradient id="tf1" cx="40%" cy="30%" r="65%"><stop offset="0%" stop-color="#ffb3d1"/><stop offset="55%" stop-color="#ff006e"/><stop offset="100%" stop-color="#ad1457"/></radialGradient></defs></svg>
+          <div class="tf-stem"></div>
+        </div>
+        <div class="tf-tulip" style="--d:0.2s;--h:85px">
+          <svg viewBox="0 0 28 38" width="32"><path d="M14 36C7 29 1 22 2 13 3 6 8 2 14 3c6-1 11 3 12 10 1 9-5 16-12 23z" fill="url(#tf2)"/><path d="M9 10C7 5 8 1 11 2c1 2 2 6 3 8z" fill="#ef9a9a"/><path d="M19 10C21 5 20 1 17 2c-1 2-2 6-3 8z" fill="#ef9a9a"/><defs><radialGradient id="tf2" cx="40%" cy="30%" r="65%"><stop offset="0%" stop-color="#ff6060"/><stop offset="55%" stop-color="#d32f2f"/><stop offset="100%" stop-color="#7f0000"/></radialGradient></defs></svg>
+          <div class="tf-stem"></div>
+        </div>
+        <div class="tf-tulip" style="--d:0.4s;--h:95px">
+          <svg viewBox="0 0 28 38" width="36"><path d="M14 36C7 29 1 22 2 13 3 6 8 2 14 3c6-1 11 3 12 10 1 9-5 16-12 23z" fill="url(#tf3)"/><path d="M9 10C7 5 8 1 11 2c1 2 2 6 3 8z" fill="#f8bbd0"/><path d="M19 10C21 5 20 1 17 2c-1 2-2 6-3 8z" fill="#f8bbd0"/><defs><radialGradient id="tf3" cx="40%" cy="30%" r="65%"><stop offset="0%" stop-color="#ffcce0"/><stop offset="55%" stop-color="#e91e8c"/><stop offset="100%" stop-color="#880e4f"/></radialGradient></defs></svg>
+          <div class="tf-stem"></div>
+        </div>
+        <div class="tf-tulip" style="--d:0.6s;--h:80px">
+          <svg viewBox="0 0 28 38" width="30"><path d="M14 36C7 29 1 22 2 13 3 6 8 2 14 3c6-1 11 3 12 10 1 9-5 16-12 23z" fill="url(#tf4)"/><defs><radialGradient id="tf4" cx="40%" cy="30%" r="65%"><stop offset="0%" stop-color="#ff80b3"/><stop offset="60%" stop-color="#ff1a6e"/><stop offset="100%" stop-color="#ad1457"/></radialGradient></defs></svg>
+          <div class="tf-stem"></div>
+        </div>
+        <div class="tf-tulip" style="--d:0.8s;--h:75px">
+          <svg viewBox="0 0 28 38" width="26"><path d="M14 36C7 29 1 22 2 13 3 6 8 2 14 3c6-1 11 3 12 10 1 9-5 16-12 23z" fill="url(#tf5)"/><defs><radialGradient id="tf5" cx="40%" cy="30%" r="65%"><stop offset="0%" stop-color="#ff6060"/><stop offset="55%" stop-color="#d32f2f"/><stop offset="100%" stop-color="#7f0000"/></radialGradient></defs></svg>
+          <div class="tf-stem"></div>
+        </div>
+        <div class="tf-tulip" style="--d:1s;--h:90px">
+          <svg viewBox="0 0 28 38" width="32"><path d="M14 36C7 29 1 22 2 13 3 6 8 2 14 3c6-1 11 3 12 10 1 9-5 16-12 23z" fill="url(#tf6)"/><defs><radialGradient id="tf6" cx="40%" cy="30%" r="65%"><stop offset="0%" stop-color="#ffcce0"/><stop offset="55%" stop-color="#e91e8c"/><stop offset="100%" stop-color="#880e4f"/></radialGradient></defs></svg>
+          <div class="tf-stem"></div>
+        </div>
+        <div class="tf-tulip" style="--d:1.2s;--h:70px">
+          <svg viewBox="0 0 28 38" width="28"><path d="M14 36C7 29 1 22 2 13 3 6 8 2 14 3c6-1 11 3 12 10 1 9-5 16-12 23z" fill="url(#tf7)"/><defs><radialGradient id="tf7" cx="40%" cy="30%" r="65%"><stop offset="0%" stop-color="#ffb3d1"/><stop offset="55%" stop-color="#ff006e"/><stop offset="100%" stop-color="#ad1457"/></radialGradient></defs></svg>
+          <div class="tf-stem"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="birthday.js"></script>
+</body>
+</html>

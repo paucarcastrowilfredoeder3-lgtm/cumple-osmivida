@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Para ti 💖</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Canvas fondo espacial (planetas + estrellas) -->
+  <canvas id="particles"></canvas>
+
+  <!-- Pétalos flotantes -->
+  <div id="floating-petals"></div>
+
+  <!-- Corazones flotantes -->
+  <div id="floating-hearts"></div>
+
+  <!-- Música suave de fondo (solo en el intro) -->
+  <audio id="bgMusic" loop>
+    <source src="https://cdn.pixabay.com/audio/2023/05/16/audio_a5a5c28bb2.mp3" type="audio/mpeg">
+  </audio>
+  <button class="music-btn" id="musicBtn" onclick="toggleMusic()" title="Música">🎵</button>
+
+  <!-- ══════════════════════════════
+       PANTALLA INTRO — CUENTA REGRESIVA
+  ══════════════════════════════ -->
+  <div id="intro-screen">
+    <div class="intro-inner">
+
+      <!-- Corazón CSS latiendo -->
+      <div class="intro-css-heart">
+        <div class="heart-shine"></div>
+      </div>
+
+      <!-- Tulipanes SVG abiertos -->
+      <div class="intro-tulips-svg">
+
+        <!-- Tulipán 1 — rosa medio -->
+        <div class="intro-tulip" style="--delay:0s; transform:scale(0.88)">
+          <svg viewBox="0 0 60 80" width="42" height="56" fill="none">
+            <!-- Pétalos traseros -->
+            <ellipse cx="30" cy="38" rx="12" ry="20" fill="#e91e8c" opacity="0.7" transform="rotate(-18 30 58)"/>
+            <ellipse cx="30" cy="38" rx="12" ry="20" fill="#e91e8c" opacity="0.7" transform="rotate(18 30 58)"/>
+            <!-- Pétalos laterales -->
+            <ellipse cx="30" cy="34" rx="14" ry="22" fill="#ff4d8d" transform="rotate(-30 30 56)"/>
+            <ellipse cx="30" cy="34" rx="14" ry="22" fill="#ff4d8d" transform="rotate(30 30 56)"/>
+            <!-- Pétalo central -->
+            <ellipse cx="30" cy="30" rx="11" ry="22" fill="#ff80b3"/>
+            <!-- Brillo -->
+            <ellipse cx="26" cy="22" rx="4" ry="8" fill="rgba(255,255,255,0.25)" transform="rotate(-10 26 22)"/>
+            <!-- Base cáliz -->
+            <path d="M22 54 Q30 58 38 54 Q35 60 30 61 Q25 60 22 54Z" fill="#2e7d32"/>
+          </svg>
+          <div class="tulip-stem-line" style="height:38px"></div>
+          <div class="tulip-leaf"></div>
+        </div>
+
+        <!-- Tulipán 2 — rosa oscuro -->
+        <div class="intro-tulip" style="--delay:0.3s; transform:scale(0.95)">
+          <svg viewBox="0 0 60 80" width="44" height="58" fill="none">
+            <ellipse cx="30" cy="38" rx="11" ry="19" fill="#c2185b" opacity="0.75" transform="rotate(-20 30 58)"/>
+            <ellipse cx="30" cy="38" rx="11" ry="19" fill="#c2185b" opacity="0.75" transform="rotate(20 30 58)"/>
+            <ellipse cx="30" cy="34" rx="13" ry="21" fill="#e91e8c" transform="rotate(-32 30 56)"/>
+            <ellipse cx="30" cy="34" rx="13" ry="21" fill="#e91e8c" transform="rotate(32 30 56)"/>
+            <ellipse cx="30" cy="29" rx="10" ry="21" fill="#f06292"/>
+            <ellipse cx="26" cy="21" rx="3.5" ry="7" fill="rgba(255,255,255,0.22)" transform="rotate(-12 26 21)"/>
+            <path d="M22 53 Q30 57 38 53 Q35 59 30 60 Q25 59 22 53Z" fill="#2e7d32"/>
+          </svg>
+          <div class="tulip-stem-line" style="height:44px"></div>
+          <div class="tulip-leaf"></div>
+        </div>
+
+        <!-- Tulipán 3 — central, más grande, rosa claro -->
+        <div class="intro-tulip" style="--delay:0.6s; transform:scale(1.15); margin-bottom:8px">
+          <svg viewBox="0 0 70 90" width="52" height="68" fill="none">
+            <!-- Pétalos traseros -->
+            <ellipse cx="35" cy="42" rx="13" ry="23" fill="#e91e8c" opacity="0.65" transform="rotate(-22 35 65)"/>
+            <ellipse cx="35" cy="42" rx="13" ry="23" fill="#e91e8c" opacity="0.65" transform="rotate(22 35 65)"/>
+            <!-- Pétalos medios -->
+            <ellipse cx="35" cy="38" rx="15" ry="25" fill="#ff4d8d" transform="rotate(-35 35 63)"/>
+            <ellipse cx="35" cy="38" rx="15" ry="25" fill="#ff4d8d" transform="rotate(35 35 63)"/>
+            <!-- Pétalos frontales -->
+            <ellipse cx="35" cy="32" rx="13" ry="26" fill="#ff80b3"/>
+            <ellipse cx="35" cy="34" rx="10" ry="22" fill="#ffb3cc" opacity="0.6"/>
+            <!-- Brillos -->
+            <ellipse cx="30" cy="22" rx="5" ry="10" fill="rgba(255,255,255,0.28)" transform="rotate(-12 30 22)"/>
+            <ellipse cx="38" cy="28" rx="3" ry="6" fill="rgba(255,255,255,0.18)" transform="rotate(8 38 28)"/>
+            <!-- Base cáliz -->
+            <path d="M24 62 Q35 67 46 62 Q42 70 35 71 Q28 70 24 62Z" fill="#2e7d32"/>
+          </svg>
+          <div class="tulip-stem-line" style="height:50px"></div>
+          <div class="tulip-leaf" style="width:16px;height:11px"></div>
+        </div>
+
+        <!-- Tulipán 4 — rosa oscuro -->
+        <div class="intro-tulip" style="--delay:0.9s; transform:scale(0.95)">
+          <svg viewBox="0 0 60 80" width="44" height="58" fill="none">
+            <ellipse cx="30" cy="38" rx="11" ry="19" fill="#c2185b" opacity="0.75" transform="rotate(-20 30 58)"/>
+            <ellipse cx="30" cy="38" rx="11" ry="19" fill="#c2185b" opacity="0.75" transform="rotate(20 30 58)"/>
+            <ellipse cx="30" cy="34" rx="13" ry="21" fill="#e91e8c" transform="rotate(-32 30 56)"/>
+            <ellipse cx="30" cy="34" rx="13" ry="21" fill="#e91e8c" transform="rotate(32 30 56)"/>
+            <ellipse cx="30" cy="29" rx="10" ry="21" fill="#f48fb1"/>
+            <ellipse cx="26" cy="21" rx="3.5" ry="7" fill="rgba(255,255,255,0.22)" transform="rotate(-12 26 21)"/>
+            <path d="M22 53 Q30 57 38 53 Q35 59 30 60 Q25 59 22 53Z" fill="#2e7d32"/>
+          </svg>
+          <div class="tulip-stem-line" style="height:44px"></div>
+          <div class="tulip-leaf"></div>
+        </div>
+
+        <!-- Tulipán 5 — rosa medio -->
+        <div class="intro-tulip" style="--delay:1.2s; transform:scale(0.88)">
+          <svg viewBox="0 0 60 80" width="42" height="56" fill="none">
+            <ellipse cx="30" cy="38" rx="12" ry="20" fill="#e91e8c" opacity="0.7" transform="rotate(-18 30 58)"/>
+            <ellipse cx="30" cy="38" rx="12" ry="20" fill="#e91e8c" opacity="0.7" transform="rotate(18 30 58)"/>
+            <ellipse cx="30" cy="34" rx="14" ry="22" fill="#ff4d8d" transform="rotate(-30 30 56)"/>
+            <ellipse cx="30" cy="34" rx="14" ry="22" fill="#ff4d8d" transform="rotate(30 30 56)"/>
+            <ellipse cx="30" cy="30" rx="11" ry="22" fill="#ff80b3"/>
+            <ellipse cx="26" cy="22" rx="4" ry="8" fill="rgba(255,255,255,0.25)" transform="rotate(-10 26 22)"/>
+            <path d="M22 54 Q30 58 38 54 Q35 60 30 61 Q25 60 22 54Z" fill="#2e7d32"/>
+          </svg>
+          <div class="tulip-stem-line" style="height:38px"></div>
+          <div class="tulip-leaf"></div>
+        </div>
+
+      </div>
+
+      <!-- Texto -->
+      <h2 class="intro-label">Solo faltan</h2>
+
+      <!-- Contador -->
+      <div id="intro-countdown"></div>
+
+      <p class="intro-date-small">días para tu cumpleaños, mi amor 💖</p>
+      <p class="intro-bday">21 · Septiembre</p>
+
+      <!-- Puntos decorativos -->
+      <div class="intro-glow-bar">
+        <div class="glow-dot"></div>
+        <div class="glow-dot"></div>
+        <div class="glow-dot"></div>
+        <div class="glow-dot"></div>
+        <div class="glow-dot"></div>
+      </div>
+      <p class="intro-surprise">Tengo una sorpresa para ti</p>
+
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
