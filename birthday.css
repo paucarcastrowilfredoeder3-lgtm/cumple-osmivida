@@ -1,263 +1,1060 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Feliz Cumpleaños mi amor 💖</title>
-  <link rel="stylesheet" href="birthday.css"/>
-</head>
-<body>
+/* ══════════════════════════════════════════
+   VARIABLES & RESET
+══════════════════════════════════════════ */
+:root {
+  --rose:       #ff4d8d;
+  --rose-deep:  #e91e8c;
+  --rose-light: #ffb3cc;
+  --rose-pale:  #ffe0ee;
+  --magenta:    #ff006e;
+  --crimson:    #c2185b;
+  --gold:       #ffd700;
+  --gold-light: #fff0a0;
+  --bg-dark:    #0d0018;
+  --bg-mid:     #1a0030;
+  --bg-rose:    #2a0040;
+  --white:      #ffffff;
+}
 
-  <!-- Canvas fuegos artificiales -->
-  <canvas id="fireworks" width="1080" height="948"></canvas>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Georgia', serif;
+  background: var(--bg-dark);
+  color: var(--white);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
 
-  <!-- Música: Sebastián Yatra & Camilo - En Guerra (desde 3:21) -->
-  <audio id="bdayMusic" loop></audio>
+/* ══════════════════════════════════════════
+   CANVAS FUEGOS ARTIFICIALES
+══════════════════════════════════════════ */
+#fireworks {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
 
-  <!-- Youtube iframe visible para audio real -->
-  <iframe id="ytPlayer"
-    style="position:fixed;height:1px;overflow:hidden;pointer-events:none;bottom:-10px;left:-10px;"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    allowfullscreen
-    src="https://www.youtube.com/embed/KAANzS240rM?autoplay=1&start=201&loop=1&playlist=KAANzS240rM&controls=0&mute=0&origin=https://paucarcastrowilfredoeder3-lgtm.github.io">
-  </iframe>
+/* ══════════════════════════════════════════
+   BOTÓN MÚSICA
+══════════════════════════════════════════ */
+.music-fab {
+  position: fixed;
+  top: 16px; right: 16px;
+  z-index: 999;
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,77,141,0.5);
+  background: rgba(26,0,48,0.85);
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 14px rgba(255,0,110,0.3);
+  backdrop-filter: blur(8px);
+  transition: transform .2s;
+}
+.music-fab:hover { transform: scale(1.1); }
+.music-fab.on { animation: musicPulse 2s ease-in-out infinite; }
+@keyframes musicPulse {
+  0%,100% { box-shadow: 0 0 14px rgba(255,0,110,0.3); }
+  50%     { box-shadow: 0 0 28px rgba(255,0,110,0.7); }
+}
 
-  <button class="music-fab" id="musicFab" onclick="toggleBdayMusic()" title="Música">🔊</button>
+/* ══════════════════════════════════════════
+   SECCIONES BASE
+══════════════════════════════════════════ */
+.section {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
 
-  <!-- ══════════════════════════════════════
-        SECCIÓN 0: CUENTA REGRESIVA
-  ══════════════════════════════════════ -->
-  <section class="section s-countdown" id="sCountdown" style="display:none">
-    <div class="countdown-card">
-      <div class="cd-heart">💖</div>
-      <div class="cd-flowers">🌸 🌸 🌷 🌸 🌸</div>
-      <h2>Solo faltan</h2>
-      <div class="timer-grid">
-        <div class="time-box"><span id="cdDays">00</span><label>DÍAS</label></div>
-        <div class="time-box"><span id="cdHours">00</span><label>HRS</label></div>
-        <div class="time-box"><span id="cdMins">00</span><label>MIN</label></div>
-        <div class="time-box"><span id="cdSecs">00</span><label>SEG</label></div>
-      </div>
-      <p class="cd-sub">días para tu cumpleaños, mi amor 💖</p>
-      <p class="cd-date">21 · SEPTIEMBRE</p>
-      <div class="cd-dots">•••••</div>
-      <p class="cd-surprise">Tengo una sorpresa para ti</p>
-    </div>
-  </section>
+/* ══════════════════════════════════════════
+   SECCIÓN 0 — CUENTA REGRESIVA
+══════════════════════════════════════════ */
+.s-countdown {
+  background: radial-gradient(ellipse at 50% 40%, #3d0060 0%, #1a0030 50%, #0d0018 100%);
+  padding: 20px;
+  text-align: center;
+}
 
-  <!-- ══════════════════════════════════════
-        SECCIÓN 1: INTRO NOMBRE LETRA X LETRA
-  ══════════════════════════════════════ -->
-  <section class="section s-intro" id="sIntro">
-    <div class="intro-overlay"></div>
+.countdown-card {
+  background: rgba(255, 0, 110, 0.08);
+  border: 1px solid rgba(255, 77, 141, 0.35);
+  border-radius: 24px;
+  padding: 36px 24px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 0 30px rgba(255, 0, 110, 0.2), inset 0 0 20px rgba(255, 0, 110, 0.05);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: fadeInUp 0.8s ease both;
+}
 
-    <!-- Corazones de fondo -->
-    <div class="intro-hearts-bg" id="introHeartsBg"></div>
+.cd-heart {
+  font-size: 2.2rem;
+  animation: sealPulse 1.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px var(--magenta));
+}
 
-    <div class="intro-stage">
-      <!-- Texto animado -->
-      <p class="intro-pre">✨ Hoy es tu día ✨</p>
-      <h1 class="intro-name" id="introName"></h1>
-      <p class="intro-post" id="introPost"></p>
+.cd-flowers {
+  font-size: 1.1rem;
+  letter-spacing: 4px;
+  opacity: 0.85;
+}
 
-      <!-- Corazón grande SVG palpitando -->
-      <div class="big-heart-wrapper">
-        <div class="big-heart-glow"></div>
-        <div class="big-heart">
-          <svg width="110" height="100" viewBox="0 0 110 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <radialGradient id="hg1" cx="35%" cy="28%" r="65%">
-                <stop offset="0%" stop-color="#ffaad4"/>
-                <stop offset="45%" stop-color="#ff3380"/>
-                <stop offset="100%" stop-color="#aa0044"/>
-              </radialGradient>
-            </defs>
-            <path d="M55 92 C55 92 5 58 5 30 C5 16 16 6 30 6 C40 6 50 13 55 20 C60 13 70 6 80 6 C94 6 105 16 105 30 C105 58 55 92 55 92Z" fill="url(#hg1)"/>
-            <ellipse cx="36" cy="24" rx="10" ry="6" fill="rgba(255,255,255,0.3)" transform="rotate(-30 36 24)"/>
-            <ellipse cx="28" cy="32" rx="5" ry="3" fill="rgba(255,255,255,0.18)" transform="rotate(-20 28 32)"/>
-          </svg>
-        </div>
-      </div>
+.countdown-card h2 {
+  font-size: 1.3rem;
+  color: var(--rose-light);
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
 
-      <button class="btn-enter" id="btnEnter" onclick="goToMain()">
-        <span>Abrir tu regalo 💖</span>
-      </button>
-    </div>
-  </section>
+.timer-grid {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 10px 0;
+  width: 100%;
+}
 
-  <!-- ══════════════════════════════════════
-        SECCIÓN 2: CONTENIDO PRINCIPAL
-  ══════════════════════════════════════ -->
-  <section class="section s-main" id="sMain" style="display:none">
+.time-box {
+  background: rgba(26, 0, 48, 0.8);
+  border: 1px solid rgba(255, 77, 141, 0.4);
+  border-radius: 12px;
+  padding: 12px 8px;
+  flex: 1;
+  min-width: 65px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 0 12px rgba(255, 0, 110, 0.2);
+}
 
-    <!-- Partículas rosas de fondo -->
-    <div class="pink-particles" id="pinkParticles"></div>
+.time-box span {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--gold);
+  text-shadow: 0 0 10px var(--gold);
+}
 
-    <!-- Tulipanes decorativos flotando -->
-    <div class="deco-tulips" id="decoTulips"></div>
+.time-box label {
+  font-size: 0.65rem;
+  color: var(--rose-light);
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
 
-    <div class="main-wrap">
+.cd-sub {
+  color: #f0c0d0;
+  font-size: 0.95rem;
+  font-style: italic;
+}
 
-      <!-- ── TÍTULO ── -->
-      <div class="main-header reveal">
-        <div class="sparkle-row">
-          <span class="sparkle">✦</span>
-          <span class="sparkle">✦</span>
-          <span class="sparkle">✦</span>
-        </div>
-        <h2 class="main-title">¡Feliz Cumpleaños!</h2>
-        <p class="main-sub">mi amor 💖</p>
-        <p class="main-date">21 de Septiembre</p>
-      </div>
+.cd-date {
+  color: var(--gold);
+  font-size: 0.85rem;
+  letter-spacing: 4px;
+  font-weight: bold;
+  text-shadow: 0 0 8px var(--gold);
+}
 
-      <!-- ── FOTO CON MARCO ROSA ── -->
-      <div class="photo-section reveal">
-        <div class="photo-outer-glow"></div>
-        <div class="photo-frame-rose">
-          <div class="petal-corner pc-tl">
-            <svg viewBox="0 0 40 40" width="40"><ellipse cx="20" cy="20" rx="10" ry="18" fill="#ff4d8d" opacity="0.85" transform="rotate(-40 20 20)"/><ellipse cx="20" cy="20" rx="8" ry="16" fill="#ff80b3" opacity="0.5" transform="rotate(-40 20 20)"/></svg>
-          </div>
-          <div class="petal-corner pc-tr">
-            <svg viewBox="0 0 40 40" width="40"><ellipse cx="20" cy="20" rx="10" ry="18" fill="#ff4d8d" opacity="0.85" transform="rotate(40 20 20)"/><ellipse cx="20" cy="20" rx="8" ry="16" fill="#ff80b3" opacity="0.5" transform="rotate(40 20 20)"/></svg>
-          </div>
-          <div class="petal-corner pc-bl">
-            <svg viewBox="0 0 40 40" width="40"><ellipse cx="20" cy="20" rx="10" ry="18" fill="#e91e8c" opacity="0.85" transform="rotate(140 20 20)"/></svg>
-          </div>
-          <div class="petal-corner pc-br">
-            <svg viewBox="0 0 40 40" width="40"><ellipse cx="20" cy="20" rx="10" ry="18" fill="#e91e8c" opacity="0.85" transform="rotate(-140 20 20)"/></svg>
-          </div>
-          <div class="frame-flower ff-t">🌸</div>
-          <div class="frame-flower ff-b">🌸</div>
-          <img src="iris.jpg" alt="mi amor" class="photo-img" onerror="this.src='iris.jpg.jpeg'"/>
-          <div class="photo-label">Mi amor 💖</div>
-        </div>
-      </div>
+.cd-dots {
+  color: rgba(255, 77, 141, 0.5);
+  letter-spacing: 6px;
+}
 
-      <!-- ── SOBRE CON CARTA ── -->
-      <div class="envelope-section reveal" id="envelopeSection">
-        <h3 class="section-title">Una carta para ti 💌</h3>
-        <div class="envelope-wrapper" id="envelopeWrapper" onclick="openEnvelope()">
-          <div class="envelope" id="envelope">
-            <div class="env-back"></div>
-            <div class="env-flap" id="envFlap"></div>
-            <div class="env-front">
-              <div class="env-seal" id="envSeal">💖</div>
-            </div>
-          </div>
-          <p class="env-tap-hint" id="envTapHint">Toca para abrir ✨</p>
-        </div>
+.cd-surprise {
+  color: var(--rose-light);
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  opacity: 0.9;
+}
 
-        <div class="letter-card" id="letterCard" style="display:none">
-          <div class="letter-inner">
-            <p class="letter-greeting">Mi bebé,</p>
-            <p>
-              Hoy es un día muy especial para ti.<br/>
-              Te amo mucho y quiero decirte lo importante<br/>
-              que te has convertido para mí.
-            </p>
-            <p>
-              Quiero que tu cumpleaños nunca pase como un día cualquiera,<br/>
-              sino que siempre sea un día especial para ti.
-            </p>
-            <p>
-              Deseo que cumplas todos tus objetivos,<br/>
-              que siempre estés feliz y pueda verte<br/>
-              siempre sonriendo, mi chinita hermosa.
-            </p>
-            <p>
-              Siempre te apoyaré en todo<br/>
-              y estaré para ti.
-            </p>
-            <p class="letter-sign">
-              Con todo mi amor 💖<br/>
-              <em>Att. Nerito</em> 🐻
-            </p>
-          </div>
-        </div>
-      </div>
+/* ══════════════════════════════════════════
+   SECCIÓN 1 — INTRO
+══════════════════════════════════════════ */
+.s-intro {
+  background: radial-gradient(ellipse at 50% 40%,
+    #3d0060 0%, #1a0030 50%, #0d0018 100%);
+}
 
-      <!-- ── VELA ── -->
-      <div class="candle-section reveal">
-        <h3 class="section-title">🎂 Sopla la vela y pide un deseo</h3>
-        <p class="candle-sub" id="candleHint">Activa el micrófono y sopla fuerte 🎤</p>
-        <div class="cake-wrapper">
-          <div class="candle-wrap">
-            <div class="flame-wrap" id="flameWrapper">
-              <div class="flame-outer"></div>
-              <div class="flame-inner"></div>
-              <div class="flame-core"></div>
-              <div class="flame-glow-halo"></div>
-            </div>
-            <div class="candle-body">
-              <div class="candle-stripe"></div>
-              <div class="candle-stripe"></div>
-              <div class="candle-stripe"></div>
-            </div>
-          </div>
-          <div class="cake-body">
-            <div class="cake-layer cake-l1">
-              <div class="cake-deco">
-                <span>🌸</span><span>💖</span><span>🌸</span>
-              </div>
-            </div>
-            <div class="cake-layer cake-l2">
-              <div class="cake-drip"></div>
-              <span class="cake-text-label">mi amor 💖</span>
-            </div>
-            <div class="cake-plate"></div>
-          </div>
-        </div>
-        <button class="mic-btn" id="micBtn" onclick="startBlowDetection()">
-          🎤 Activar micrófono
-        </button>
-        <div class="wish-msg" id="wishMessage" style="display:none">
-          <p>🌟 ¡Tu deseo fue escuchado por el universo!</p>
-          <p class="wish-sub">¡Que todos tus sueños se hagan realidad, amor!</p>
-        </div>
-      </div>
+.intro-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(255,0,110,0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255,77,141,0.12) 0%, transparent 50%);
+  pointer-events: none;
+}
 
-      <!-- ── RAZONES ── -->
-      <div class="reasons-section reveal">
-        <h3 class="section-title">💕 Por qué te amo</h3>
-        <div class="reasons-grid" id="reasonsGrid"></div>
-      </div>
+.intro-hearts-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.ibh {
+  position: absolute;
+  animation: ibhFloat linear infinite;
+  opacity: 0;
+}
+@keyframes ibhFloat {
+  0%   { opacity: 0; transform: translateY(0) scale(0.8) rotate(-10deg); }
+  10%  { opacity: .6; }
+  90%  { opacity: .3; }
+  100% { opacity: 0; transform: translateY(-100vh) scale(1.2) rotate(15deg); }
+}
 
-      <!-- ── TULIPANES JARDÍN ── -->
-      <div class="tulip-field reveal">
-        <div class="tf-tulip" style="--d:0s;--h:70px">
-          <svg viewBox="0 0 28 38" width="28"><path d="M14 36C7 29 1 22 2 13 3 6 8 2 14 3c6-1 11 3 12 10 1 9-5 16-12 23z" fill="url(#tf1)"/><path d="M9 10C7 5 8 1 11 2c1 2 2 6 3 8z" fill="#ff80b3"/><path d="M19 10C21 5 20 1 17 2c-1 2-2 6-3 8z" fill="#ff80b3"/><defs><radialGradient id="tf1" cx="40%" cy="30%" r="65%"><stop offset="0%" stop-color="#ffb3d1"/><stop offset="55%" stop-color="#ff006e"/><stop offset="100%" stop-color="#ad1457"/></radialGradient></defs></svg>
-          <div class="tf-stem"></div>
-        </div>
-        <div class="tf-tulip" style="--d:0.2s;--h:85px">
-          <svg viewBox="0 0 28 38" width="32"><path d="M14 36C7 29 1 22 2 13 3 6 8 2 14 3c6-1 11 3 12 10 1 9-5 16-12 23z" fill="url(#tf2)"/><path d="M9 10C7 5 8 1 11 2c1 2 2 6 3 8z" fill="#ef9a9a"/><path d="M19 10C21 5 20 1 17 2c-1 2-2 6-3 8z" fill="#ef9a9a"/><defs><radialGradient id="tf2" cx="40%" cy="30%" r="65%"><stop offset="0%" stop-color="#ff6060"/><stop offset="55%" stop-color="#d32f2f"/><stop offset="100%" stop-color="#7f0000"/></radialGradient></defs></svg>
-          <div class="tf-stem"></div>
-        </div>
-        <div class="tf-tulip" style="--d:0.4s;--h:95px">
-          <svg viewBox="0 0 28 38" width="36"><path d="M14 36C7 29 1 22 2 13 3 6 8 2 14 3c6-1 11 3 12 10 1 9-5 16-12 23z" fill="url(#tf3)"/><path d="M9 10C7 5 8 1 11 2c1 2 2 6 3 8z" fill="#f8bbd0"/><path d="M19 10C21 5 20 1 17 2c-1 2-2 6-3 8z" fill="#f8bbd0"/><defs><radialGradient id="tf3" cx="40%" cy="30%" r="65%"><stop offset="0%" stop-color="#ffcce0"/><stop offset="55%" stop-color="#e91e8c"/><stop offset="100%" stop-color="#880e4f"/></radialGradient></defs></svg>
-          <div class="tf-stem"></div>
-        </div>
-        <div class="tf-tulip" style="--d:0.6s;--h:80px">
-          <svg viewBox="0 0 28 38" width="30"><path d="M14 36C7 29 1 22 2 13 3 6 8 2 14 3c6-1 11 3 12 10 1 9-5 16-12 23z" fill="url(#tf4)"/><defs><radialGradient id="tf4" cx="40%" cy="30%" r="65%"><stop offset="0%" stop-color="#ff80b3"/><stop offset="60%" stop-color="#ff1a6e"/><stop offset="100%" stop-color="#ad1457"/></radialGradient></defs></svg>
-          <div class="tf-stem"></div>
-        </div>
-        <div class="tf-tulip" style="--d:0.8s;--h:75px">
-          <svg viewBox="0 0 28 38" width="26"><path d="M14 36C7 29 1 22 2 13 3 6 8 2 14 3c6-1 11 3 12 10 1 9-5 16-12 23z" fill="url(#tf5)"/><defs><radialGradient id="tf5" cx="40%" cy="30%" r="65%"><stop offset="0%" stop-color="#ff6060"/><stop offset="55%" stop-color="#d32f2f"/><stop offset="100%" stop-color="#7f0000"/></radialGradient></defs></svg>
-          <div class="tf-stem"></div>
-        </div>
-        <div class="tf-tulip" style="--d:1s;--h:90px">
-          <svg viewBox="0 0 28 38" width="32"><path d="M14 36C7 29 1 22 2 13 3 6 8 2 14 3c6-1 11 3 12 10 1 9-5 16-12 23z" fill="url(#tf6)"/><defs><radialGradient id="tf6" cx="40%" cy="30%" r="65%"><stop offset="0%" stop-color="#ffcce0"/><stop offset="55%" stop-color="#e91e8c"/><stop offset="100%" stop-color="#880e4f"/></radialGradient></defs></svg>
-          <div class="tf-stem"></div>
-        </div>
-        <div class="tf-tulip" style="--d:1.2s;--h:70px">
-          <svg viewBox="0 0 28 38" width="28"><path d="M14 36C7 29 1 22 2 13 3 6 8 2 14 3c6-1 11 3 12 10 1 9-5 16-12 23z" fill="url(#tf7)"/><defs><radialGradient id="tf7" cx="40%" cy="30%" r="65%"><stop offset="0%" stop-color="#ffb3d1"/><stop offset="55%" stop-color="#ff006e"/><stop offset="100%" stop-color="#ad1457"/></radialGradient></defs></svg>
-          <div class="tf-stem"></div>
-        </div>
-      </div>
+.intro-stage {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
 
-    </div>
-  </section>
+.intro-pre {
+  font-size: 1rem;
+  color: var(--gold);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-shadow: 0 0 12px var(--gold);
+  animation: fadeInDown 1s ease both;
+}
 
-  <script src="birthday.js"></script>
-</body>
-</html>
+/* Nombre letra por letra */
+.intro-name {
+  font-size: clamp(2.4rem, 8vw, 4.2rem);
+  font-weight: 900;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  min-height: 1.2em;
+  background: linear-gradient(135deg, #ffcce0, #ff4d8d, #ff006e, #ff80b3, var(--gold));
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: nameShimmer 3s linear infinite;
+  filter: drop-shadow(0 0 16px rgba(255,0,110,0.6));
+}
+@keyframes nameShimmer {
+  0%   { background-position: 0%   center; }
+  100% { background-position: 300% center; }
+}
+.intro-name .char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(30px) scale(0.5);
+  animation: charIn .5s cubic-bezier(.175,.885,.32,1.275) forwards;
+  -webkit-text-fill-color: transparent;
+}
+@keyframes charIn {
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.intro-name .char-space { display: inline-block; width: .4em; }
+
+.intro-post {
+  font-size: 1.3rem;
+  color: var(--rose-light);
+  font-style: italic;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px var(--rose);
+  opacity: 0;
+  animation: fadeInUp 1s ease .2s forwards;
+}
+
+/* Corazón grande SVG */
+.big-heart-wrapper {
+  position: relative;
+  width: 130px; height: 120px;
+  margin: 10px auto 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.big-heart-glow {
+  position: absolute;
+  width: 170px; height: 170px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(255,0,110,0.55) 0%,
+    rgba(255,77,141,0.28) 40%,
+    transparent 70%);
+  animation: glowPulse 1.2s ease-in-out infinite;
+}
+.big-heart {
+  position: relative;
+  animation: heartbeat 1.1s ease-in-out infinite;
+  filter: drop-shadow(0 0 18px #ff006e) drop-shadow(0 0 36px #ff4d8d);
+  z-index: 1;
+}
+.big-heart svg {
+  display: block;
+}
+.big-heart-shine { display: none; }
+@keyframes heartbeat {
+  0%,100% { transform: scale(1); }
+  14%     { transform: scale(1.22); }
+  28%     { transform: scale(1); }
+  42%     { transform: scale(1.14); }
+  70%     { transform: scale(1); }
+}
+
+/* Botón entrar */
+.btn-enter {
+  margin-top: 12px;
+  padding: 16px 40px;
+  font-size: 1.1rem;
+  font-family: 'Georgia', serif;
+  color: #fff;
+  background: linear-gradient(135deg, var(--magenta), var(--rose), #ff80b3);
+  background-size: 200% auto;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow:
+    0 0 20px rgba(255,0,110,0.5),
+    0 0 50px rgba(255,77,141,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.2);
+  animation: btnShimmer 2s linear infinite, fadeInUp .8s ease both;
+  letter-spacing: 1.5px;
+  transition: transform .2s;
+}
+.btn-enter:hover { transform: scale(1.06); }
+@keyframes btnShimmer {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* ══════════════════════════════════════════
+   SECCIÓN 2 — MAIN
+══════════════════════════════════════════ */
+.s-main {
+  min-height: unset;
+  background: linear-gradient(180deg,
+    #1a0030 0%,
+    #2a0040 30%,
+    #1a0028 60%,
+    #0d0018 100%);
+  padding-bottom: 60px;
+}
+
+/* Partículas rosas */
+.pink-particles {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.pp {
+  position: absolute;
+  bottom: -20px;
+  border-radius: 50%;
+  animation: ppFloat linear infinite;
+  opacity: 0;
+}
+@keyframes ppFloat {
+  0%   { opacity: 0; transform: translateY(0) scale(.8); }
+  10%  { opacity: .7; }
+  90%  { opacity: .2; }
+  100% { opacity: 0; transform: translateY(-110vh) scale(1.2); }
+}
+
+/* Tulipanes flotantes decorativos */
+.deco-tulips {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.dt {
+  position: absolute;
+  animation: dtFloat linear infinite;
+  opacity: 0;
+  font-size: 1.4rem;
+}
+@keyframes dtFloat {
+  0%   { opacity: 0; transform: translateY(0) rotate(-10deg); }
+  10%  { opacity: .6; }
+  90%  { opacity: .3; }
+  100% { opacity: 0; transform: translateY(-100vh) rotate(10deg); }
+}
+
+.main-wrap {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 30px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+}
+
+/* Reveal on scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Header principal ── */
+.main-header { text-align: center; width: 100%; }
+.sparkle-row {
+  display: flex; justify-content: center; gap: 16px;
+  font-size: 1.2rem; margin-bottom: 10px;
+}
+.sparkle {
+  color: var(--gold);
+  animation: sparkleSpin 3s linear infinite;
+  display: inline-block;
+  text-shadow: 0 0 8px var(--gold);
+}
+.sparkle:nth-child(2) { animation-delay: 1s; }
+.sparkle:nth-child(3) { animation-delay: 2s; }
+@keyframes sparkleSpin {
+  0%,100% { transform: rotate(0)   scale(1);   opacity: 1; }
+  50%     { transform: rotate(180deg) scale(1.4); opacity: .7; }
+}
+.main-title {
+  font-size: clamp(2rem, 7vw, 3.2rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, #ffcce0, #ff4d8d, #ff006e, var(--gold));
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: nameShimmer 3s linear infinite;
+  filter: drop-shadow(0 0 12px rgba(255,0,110,.5));
+  letter-spacing: 1px;
+}
+.main-sub {
+  font-size: 1.4rem;
+  color: var(--rose-light);
+  font-style: italic;
+  margin-top: 6px;
+  text-shadow: 0 0 10px var(--rose);
+}
+.main-date {
+  font-size: .9rem;
+  color: var(--gold);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-top: 8px;
+  text-shadow: 0 0 8px var(--gold);
+}
+
+/* ── Título de sección ── */
+.section-title {
+  font-size: 1.2rem;
+  color: var(--rose-light);
+  text-align: center;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(255,77,141,.5);
+  letter-spacing: 1px;
+}
+
+/* ── FOTO ── */
+.photo-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.photo-outer-glow {
+  position: absolute;
+  width: 320px; height: 400px;
+  background: radial-gradient(ellipse,
+    rgba(255,0,110,.35) 0%,
+    rgba(255,77,141,.15) 40%,
+    transparent 70%);
+  filter: blur(24px);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: glowPulse 2s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.98); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+.photo-frame-rose {
+  position: relative;
+  padding: 14px;
+  background: linear-gradient(135deg, #2a0040, #1a0028, #3d0060);
+  border-radius: 24px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  box-shadow:
+    0 0 0 2px rgba(255,77,141,.5),
+    0 0 30px rgba(255,0,110,.4),
+    0 0 80px rgba(255,0,110,.15),
+    inset 0 0 30px rgba(255,0,110,.06);
+  max-width: 320px;
+  width: 90%;
+}
+/* Pétalos en esquinas */
+.petal-corner {
+  position: absolute;
+  width: 44px; height: 44px;
+  filter: drop-shadow(0 0 6px rgba(255,77,141,.8));
+}
+.pc-tl { top: -18px; left: -18px; }
+.pc-tr { top: -18px; right: -18px; transform: scaleX(-1); }
+.pc-bl { bottom: -18px; left: -18px; transform: scaleY(-1); }
+.pc-br { bottom: -18px; right: -18px; transform: scale(-1); }
+/* Flores en borde */
+.frame-flower {
+  position: absolute;
+  font-size: 1.4rem;
+  filter: drop-shadow(0 0 6px var(--rose));
+  animation: flowerSway 2.5s ease-in-out infinite;
+}
+.ff-t { top: -20px; left: 50%; transform: translateX(-50%); }
+.ff-b { bottom: -20px; left: 50%; transform: translateX(-50%); }
+@keyframes flowerSway {
+  0%,100% { transform: translateX(-50%) rotate(-8deg); }
+  50%     { transform: translateX(-50%) rotate(8deg); }
+}
+.photo-img {
+  width: 100%;
+  border-radius: 16px;
+  display: block;
+  object-fit: cover;
+  max-height: 380px;
+}
+.photo-label {
+  text-align: center;
+  margin-top: 12px;
+  color: var(--rose-light);
+  font-style: italic;
+  font-size: .95rem;
+  letter-spacing: 1px;
+}
+
+/* ── GALERÍA ── */
+.gallery-section { width: 100%; }
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  width: 100%;
+}
+.gallery-item {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255,77,141,.4);
+  box-shadow: 0 0 12px rgba(255,0,110,.2);
+  cursor: pointer;
+  transition: transform .25s, box-shadow .25s;
+  aspect-ratio: 1;
+  background: #2a0040;
+}
+.gallery-item img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.gallery-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 24px rgba(255,0,110,.5);
+}
+.gallery-hint {
+  text-align: center;
+  color: rgba(255,179,204,.6);
+  font-size: .82rem;
+  margin-top: 12px;
+  font-style: italic;
+}
+
+/* ── MENSAJE DE VOZ ── */
+.voice-section { width: 100%; }
+.voice-player {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255,0,110,.1);
+  border: 1px solid rgba(255,77,141,.4);
+  border-radius: 60px;
+  padding: 14px 20px;
+  box-shadow: 0 0 20px rgba(255,0,110,.15);
+  cursor: pointer;
+}
+.voice-avatar {
+  font-size: 2rem;
+  width: 50px; height: 50px;
+  background: radial-gradient(circle, rgba(255,0,110,.3), rgba(255,77,141,.1));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(255,77,141,.4);
+}
+.voice-info { flex: 1; }
+.voice-name {
+  color: var(--white);
+  font-size: .95rem;
+  font-weight: bold;
+}
+.voice-hint {
+  color: var(--rose-light);
+  font-size: .78rem;
+  margin-top: 2px;
+  font-style: italic;
+}
+.voice-btn {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--magenta), var(--rose));
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 0 16px rgba(255,0,110,.4);
+  transition: transform .2s;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.voice-btn:hover { transform: scale(1.1); }
+.voice-btn.playing { animation: voicePulse .8s ease-in-out infinite; }
+@keyframes voicePulse {
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.15); box-shadow: 0 0 24px rgba(255,0,110,.7); }
+}
+.voice-missing {
+  text-align: center;
+  color: rgba(255,179,204,.55);
+  font-size: .78rem;
+  margin-top: 12px;
+  font-style: italic;
+}
+.voice-missing strong { color: var(--rose-light); }
+
+/* ── SOBRE CON CARTA ── */
+.envelope-section { width: 100%; text-align: center; }
+.envelope-wrapper {
+  cursor: pointer;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.envelope {
+  position: relative;
+  width: 220px; height: 150px;
+  transform-style: preserve-3d;
+  transition: transform .6s ease;
+}
+/* Parte trasera */
+.env-back {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, #2a0040, #1a0028);
+  border-radius: 4px 4px 8px 8px;
+  border: 1px solid rgba(255,77,141,.5);
+  box-shadow: 0 0 24px rgba(255,0,110,.3), inset 0 0 20px rgba(255,0,110,.05);
+}
+/* Solapa */
+.env-flap {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 100px;
+  clip-path: polygon(0 0, 50% 55%, 100% 0);
+  background: linear-gradient(160deg, #3d0060, #2a0040);
+  border: 1px solid rgba(255,77,141,.4);
+  transform-origin: top center;
+  transition: transform .6s ease;
+  z-index: 2;
+}
+.env-flap.open {
+  transform: rotateX(-180deg);
+}
+/* Frente */
+.env-front {
+  position: absolute;
+  inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 3;
+}
+.env-seal {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 8px var(--rose));
+  transition: transform .3s, opacity .3s;
+  animation: sealPulse 2s ease-in-out infinite;
+}
+@keyframes sealPulse {
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.12); }
+}
+.env-seal.gone { opacity: 0; transform: scale(0); }
+.env-tap-hint {
+  color: var(--rose-light);
+  font-style: italic;
+  font-size: .88rem;
+  text-shadow: 0 0 8px var(--rose);
+}
+
+/* Carta */
+.letter-card {
+  width: 90%;
+  max-width: 380px;
+  margin: 20px auto 0;
+  background: linear-gradient(160deg, #1a0030, #0d001e);
+  border: 1px solid rgba(255,77,141,.35);
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(255,0,110,.2);
+  animation: letterReveal .8s cubic-bezier(.175,.885,.32,1.275) both;
+}
+@keyframes letterReveal {
+  0%   { opacity:0; transform: translateY(-30px) scale(.95); }
+  100% { opacity:1; transform: translateY(0) scale(1); }
+}
+.letter-inner {
+  padding: 30px 26px;
+  color: #f0c0d0;
+  font-size: .95rem;
+  line-height: 1.9;
+  text-align: center;
+  border-top: 3px solid transparent;
+  border-image: linear-gradient(90deg, transparent, var(--rose), var(--magenta), var(--rose), transparent) 1;
+}
+.letter-inner p { margin-bottom: 16px; }
+.letter-greeting {
+  font-size: 1.1rem;
+  color: var(--rose-light);
+  font-style: italic;
+  margin-bottom: 20px !important;
+}
+.letter-sign {
+  color: var(--rose);
+  font-style: italic;
+  font-size: 1.05rem;
+  text-shadow: 0 0 8px var(--magenta);
+  margin-top: 8px !important;
+  line-height: 1.8;
+}
+.letter-sign em {
+  display: block;
+  font-size: 1.15rem;
+  color: var(--rose-light);
+  font-style: italic;
+  letter-spacing: 1px;
+  margin-top: 4px;
+  text-shadow: 0 0 10px var(--rose);
+}
+
+/* ── VELA MEJORADA ── */
+.candle-section { width: 100%; text-align: center; }
+.candle-sub {
+  color: var(--rose-light);
+  font-size: .9rem;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+.cake-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 0;
+}
+/* Vela */
+.candle-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: -2px;
+  position: relative;
+  z-index: 2;
+}
+.candle-body {
+  width: 18px; height: 55px;
+  background: linear-gradient(90deg, #ffe082, #ffd700, #ffca28, #ffe082);
+  border-radius: 4px 4px 2px 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  overflow: hidden;
+  box-shadow: 0 0 8px rgba(255,213,0,.4);
+}
+.candle-stripe {
+  width: 100%; height: 4px;
+  background: rgba(255,255,255,.3);
+  border-radius: 2px;
+}
+/* Llama */
+.flame-wrap {
+  position: relative;
+  width: 30px; height: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  transition: opacity .6s;
+}
+.flame-wrap.out { opacity: 0; }
+.flame-outer {
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 22px; height: 38px;
+  background: radial-gradient(ellipse at 50% 80%,
+    rgba(255,200,50,.9) 0%,
+    rgba(255,100,0,.7) 50%,
+    rgba(255,50,0,.3) 80%,
+    transparent 100%);
+  border-radius: 50% 50% 30% 30% / 60% 60% 40% 40%;
+  animation: flameDance .6s ease-in-out infinite alternate;
+}
+.flame-inner {
+  position: absolute;
+  bottom: 4px; left: 50%;
+  transform: translateX(-50%);
+  width: 13px; height: 24px;
+  background: radial-gradient(ellipse at 50% 80%,
+    #fff 0%, #ffef80 30%, #ff9800 70%, transparent 100%);
+  border-radius: 50% 50% 30% 30% / 60% 60% 40% 40%;
+  animation: flameDance .5s ease-in-out infinite alternate-reverse;
+}
+.flame-core {
+  position: absolute;
+  bottom: 6px; left: 50%;
+  transform: translateX(-50%);
+  width: 6px; height: 12px;
+  background: radial-gradient(ellipse at 50% 80%, #fff 0%, #ffe0a0 100%);
+  border-radius: 50%;
+}
+.flame-glow-halo {
+  position: absolute;
+  bottom: -6px; left: 50%;
+  transform: translateX(-50%);
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(255,180,0,.5) 0%, transparent 70%);
+  animation: glowPulse 1s ease-in-out infinite;
+}
+@keyframes flameDance {
+  0%   { transform: translateX(-50%) scaleX(1)   scaleY(1)   rotate(-2deg); }
+  100% { transform: translateX(-50%) scaleX(.88) scaleY(1.08) rotate(2deg); }
+}
+/* Pastel */
+.cake-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  filter: drop-shadow(0 4px 16px rgba(255,0,110,.4));
+}
+.cake-layer {
+  width: 160px;
+  border-radius: 6px;
+  position: relative;
+}
+.cake-l1 {
+  height: 44px;
+  background: linear-gradient(180deg, #ff80b3 0%, #ff006e 100%);
+  border-radius: 6px 6px 0 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.cake-deco {
+  display: flex; gap: 12px; font-size: 1rem;
+  filter: drop-shadow(0 0 4px rgba(255,255,255,.5));
+}
+.cake-l2 {
+  height: 55px;
+  background: linear-gradient(180deg, #ff4d8d 0%, #c2185b 100%);
+  display: flex; align-items: center; justify-content: center;
+  overflow: visible;
+}
+/* Chorreo */
+.cake-drip {
+  position: absolute;
+  top: -8px; left: 0; right: 0; height: 14px;
+  background: repeating-radial-gradient(
+    circle at 12% 0%, #fff 0 6px, transparent 6px 14px
+  ),
+  repeating-radial-gradient(
+    circle at 38% 0%, #fff 0 5px, transparent 5px 14px
+  ),
+  repeating-radial-gradient(
+    circle at 64% 0%, #fff 0 7px, transparent 7px 14px
+  ),
+  repeating-radial-gradient(
+    circle at 88% 0%, #fff 0 5px, transparent 5px 14px
+  );
+  opacity: .85;
+}
+.cake-text-label {
+  color: #fff;
+  font-size: .88rem;
+  font-weight: bold;
+  text-shadow: 0 0 8px rgba(0,0,0,.4);
+  letter-spacing: 1px;
+}
+.cake-plate {
+  width: 175px; height: 12px;
+  background: linear-gradient(180deg, #fff0f5, #ffd6e7);
+  border-radius: 0 0 20px 20px;
+  box-shadow: 0 3px 10px rgba(255,0,110,.3);
+}
+/* Botón micrófono */
+.mic-btn {
+  padding: 13px 30px;
+  font-size: .95rem;
+  font-family: 'Georgia', serif;
+  color: #fff;
+  background: linear-gradient(135deg, #7b1fa2, var(--rose-deep), var(--magenta));
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(233,30,140,.4);
+  transition: transform .2s, box-shadow .2s;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+.mic-btn:hover { transform: scale(1.06); box-shadow: 0 0 30px rgba(233,30,140,.7); }
+.mic-btn.listening { animation: micPulse .8s ease-in-out infinite; }
+@keyframes micPulse {
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.08); box-shadow: 0 0 30px rgba(255,0,110,.8); }
+}
+.wish-msg {
+  padding: 20px 24px;
+  background: rgba(255,0,110,.12);
+  border: 1px solid rgba(255,77,141,.4);
+  border-radius: 16px;
+  text-align: center;
+  animation: letterReveal .8s ease both;
+}
+.wish-msg p { color: var(--rose-light); font-size: .95rem; line-height: 1.7; }
+.wish-sub { color: var(--gold); font-style: italic; margin-top: 6px; }
+
+/* ── RAZONES ── */
+.reasons-section { width: 100%; }
+.reasons-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.reason-card {
+  background: rgba(255,0,110,.1);
+  border: 1px solid rgba(255,77,141,.3);
+  border-radius: 16px;
+  padding: 16px 14px;
+  font-size: .88rem;
+  color: #f0c0d0;
+  line-height: 1.5;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(255,0,110,.1);
+  opacity: 0;
+  transform: scale(.9);
+  transition: opacity .5s ease, transform .5s ease;
+  position: relative;
+  overflow: hidden;
+}
+.reason-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--rose), transparent);
+}
+.reason-card.visible { opacity: 1; transform: scale(1); }
+.reason-icon { font-size: 1.5rem; display: block; margin-bottom: 6px; }
+
+/* ── JARDÍN TULIPANES ── */
+.tulip-field {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 8px;
+  padding-bottom: 10px;
+  width: 100%;
+}
+.tf-tulip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: tfSway 2s ease-in-out infinite;
+  animation-delay: var(--d);
+  transform-origin: bottom center;
+  filter: drop-shadow(0 0 6px rgba(255,0,110,.4));
+}
+@keyframes tfSway {
+  0%,100% { rotate: -5deg; }
+  50%     { rotate:  5deg; }
+}
+.tf-stem {
+  width: 3px;
+  height: var(--h);
+  background: linear-gradient(180deg, #66bb6a, #2e7d32);
+  border-radius: 2px;
+}
+
+/* ── BOTÓN AMOR ── */
+.love-fab {
+  padding: 16px 44px;
+  font-size: 1rem;
+  font-family: 'Georgia', serif;
+  color: #fff;
+  background: linear-gradient(135deg, var(--magenta), var(--rose), #ff80b3);
+  background-size: 200% auto;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  letter-spacing: 1.5px;
+  box-shadow:
+    0 0 20px rgba(255,0,110,.5),
+    0 0 50px rgba(255,77,141,.25);
+  animation: btnShimmer 2s linear infinite;
+  transition: transform .2s;
+}
+.love-fab:hover { transform: scale(1.08); }
+
+/* ══════════════════════════════════════════
+   ANIMACIONES COMPARTIDAS
+══════════════════════════════════════════ */
+@keyframes fadeInDown {
+  from { opacity:0; transform:translateY(-28px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes fadeInUp {
+  from { opacity:0; transform:translateY(30px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .intro-name { font-size: 2.2rem; letter-spacing: 3px; }
+  .reasons-grid { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: repeat(2,1fr); }
+  .photo-frame-rose { max-width: 260px; }
+  .envelope { width: 180px; height: 120px; }
+  .timer-grid { gap: 6px; }
+  .time-box { min-width: 50px; padding: 8px 4px; }
+  .time-box span { font-size: 1.4rem; }
+}
