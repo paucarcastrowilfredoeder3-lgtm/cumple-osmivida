@@ -9,11 +9,21 @@
 <body>
 
   <!-- Canvas fuegos artificiales -->
-  <canvas id="fireworks"></canvas>
+  <canvas id="fireworks" width="1080" height="948"></canvas>
 
-  <!-- Música local (3:21) -->
-  <audio id="bdayMusic" src="musica.mp3" preload="auto" loop></audio>
-  <button class="music-fab" id="musicFab" onclick="toggleBdayMusic()" title="Música">🎵</button>
+  <!-- Música: Sebastián Yatra & Camilo - En Guerra (desde 3:21) -->
+  <audio id="bdayMusic" loop></audio>
+
+  <!-- Youtube iframe visible para audio real -->
+  <iframe id="ytPlayer"
+    style="position:fixed;height:1px;overflow:hidden;pointer-events:none;bottom:-10px;left:-10px;"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+    src="https://www.youtube.com/embed/KAANzS240rM?autoplay=1&start=201&loop=1&playlist=KAANzS240rM&controls=0&mute=0&origin=https://paucarcastrowilfredoeder3-lgtm.github.io">
+  </iframe>
+
+  <button class="music-fab" id="musicFab" onclick="toggleBdayMusic()" title="Música">🔊</button>
 
   <!-- ══════════════════════════════════════
         SECCIÓN 0: CUENTA REGRESIVA
