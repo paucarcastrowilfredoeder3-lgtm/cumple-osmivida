@@ -394,11 +394,67 @@ function spawnBurst(ox,oy,count) {
 
 /* ══ INIT ══ */
 document.addEventListener('DOMContentLoaded', () => {
+  // Crear contenedor de ripples
+  const rc = document.createElement('div');
+  rc.classList.add('ripple-container');
+  rc.id = 'rippleContainer';
+  document.body.appendChild(rc);
+
   spawnIntroBgHearts();
   setTimeout(typeNameLetters, 600);
-  // Click en cualquier lugar activa música si ya estamos en main
   document.addEventListener('click', function firstClick() {
     if (musicOn) autoplayMusic();
     document.removeEventListener('click', firstClick);
   }, {once:true});
 });
+
+// ══ RIPPLE DE AGUA CON PARTÍCULAS ══
+const RIPPLE_PARTICLES = ['💖','🌷','🌹','⭐','✨','💫','🌸'];
+
+function createRipple(e) {
+  const rc = document.getElementById('rippleContainer');
+  if (!rc) return;
+
+  const x = e.clientX || (e.touches && e.touches[0].clientX) || window.innerWidth/2;
+  const y = e.clientY || (e.touches && e.touches[0].clientY) || window.innerHeight/2;
+
+  // Onda de agua
+  const wave = document.createElement('div');
+  wave.classList.add('ripple-wave');
+  const size = 60 + Math.random() * 40;
+  wave.style.cssText = `
+    left:${x}px; top:${y}px;
+    width:${size}px; height:${size}px;
+    background: radial-gradient(circle, rgba(255,77,141,0.4) 0%, rgba(255,0,110,0.15) 50%, transparent 70%);
+    border: 1px solid rgba(255,100,160,0.5);
+    animation-duration: ${0.6 + Math.random()*0.3}s;
+  `;
+  rc.appendChild(wave);
+  setTimeout(() => wave.remove(), 900);
+
+  // Partículas volando
+  const count = 6 + Math.floor(Math.random() * 4);
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.classList.add('ripple-particle');
+    p.textContent = RIPPLE_PARTICLES[Math.floor(Math.random() * RIPPLE_PARTICLES.length)];
+    const angle  = (Math.PI * 2 / count) * i + (Math.random() - 0.5) * 0.8;
+    const dist   = 40 + Math.random() * 80;
+    const dur    = 0.5 + Math.random() * 0.4;
+    const rot    = (Math.random() - 0.5) * 360;
+    p.style.cssText = `
+      left:${x}px; top:${y}px;
+      --tx:${Math.cos(angle)*dist}px;
+      --ty:${Math.sin(angle)*dist}px;
+      --rot:${rot}deg;
+      animation-duration:${dur}s;
+      font-size:${0.8 + Math.random()*0.8}rem;
+    `;
+    rc.appendChild(p);
+    setTimeout(() => p.remove(), dur * 1000 + 100);
+  }
+}
+
+// Activar ripple en click y touch
+document.addEventListener('click', createRipple);
+document.addEventListener('touchstart', (e) => createRipple(e), {passive:true});

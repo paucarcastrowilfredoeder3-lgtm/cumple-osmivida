@@ -1058,3 +1058,46 @@ body {
   .time-box { min-width: 50px; padding: 8px 4px; }
   .time-box span { font-size: 1.4rem; }
 }
+/* ══ EFECTO RIPPLE AGUA ══ */
+.ripple-container {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 9990;
+  overflow: hidden;
+}
+
+/* Onda de agua */
+.ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  animation: rippleExpand 0.8s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes rippleExpand {
+  0%   { transform: translate(-50%,-50%) scale(0);   opacity: 0.6; }
+  100% { transform: translate(-50%,-50%) scale(8);   opacity: 0; }
+}
+
+/* Partículas del ripple */
+.ripple-particle {
+  position: absolute;
+  pointer-events: none;
+  animation: particleFly ease-out forwards;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+@keyframes particleFly {
+  0%   { opacity: 1; transform: translate(0,0) scale(1) rotate(0deg); }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.4) rotate(var(--rot)); }
+}
+
+/* Efecto presión en botones */
+.btn-enter, .mic-btn, .music-fab, .love-fab, .voice-btn {
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+.btn-enter:active, .mic-btn:active, .love-fab:active {
+  transform: scale(0.93) !important;
+}
