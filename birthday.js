@@ -102,28 +102,11 @@ let musicOn = false;
 
 function startMusic() {
   if (!bdayMusic || musicOn) return;
-
-  // Mutear, cargar, saltar al 3:21, luego desmutear y reproducir
-  bdayMusic.muted = true;
   bdayMusic.volume = 1.0;
-
-  const play = () => {
-    bdayMusic.currentTime = 201;
-    bdayMusic.addEventListener('seeked', () => {
-      bdayMusic.muted = false;
-      bdayMusic.play().then(() => {
-        musicOn = true;
-        if (musicFab) { musicFab.textContent='🔊'; musicFab.classList.add('on'); }
-      }).catch(e => console.log(e));
-    }, { once: true });
-  };
-
-  if (bdayMusic.readyState >= 2) {
-    play();
-  } else {
-    bdayMusic.addEventListener('canplay', play, { once: true });
-    bdayMusic.load();
-  }
+  bdayMusic.play().then(() => {
+    musicOn = true;
+    if (musicFab) { musicFab.textContent='🔊'; musicFab.classList.add('on'); }
+  }).catch(e => console.log(e));
 }
 
 function autoplayMusic() { startMusic(); }
