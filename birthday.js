@@ -95,30 +95,56 @@ function startFireworks() {
 }
 
 
-/* ══ MÚSICA - YouTube iframe ══ */
+/* ══ MÚSICA - MP3 directo desde 3:21 ══ */
 const musicFab = document.getElementById('musicFab');
-let musicOn = true;
+const bdayMusic = document.getElementById('bdayMusic');
+let musicOn = false;
 
-function autoplayMusic() {
-  musicOn = true;
-  if (musicFab) { musicFab.textContent='🔊'; musicFab.classList.add('on'); }
+function startMusic() {
+  if (!bdayMusic || musicOn) return;
+  
+  const play = () => {
+    bdayMusic.currentTime = 201;
+    bdayMusic.volume = 1.0;
+    bdayMusic.play().then(() => {
+      musicOn = true;
+      if (musicFab) { musicFab.textContent='🔊'; musicFab.classList.add('on'); }
+    }).catch(e => console.log('audio error:', e));
+  };
+
+  // Si ya cargó suficiente, reproducir directo
+  if (bdayMusic.readyState >= 2) {
+    play();
+  } else {
+    // Esperar a que cargue
+    bdayMusic.addEventListener('canplay', play, { once: true });
+    bdayMusic.load();
+  }
 }
 
+function autoplayMusic() { startMusic(); }
+
 function toggleBdayMusic() {
-  const iframe = document.getElementById('ytPlayer');
-  if (!iframe) return;
+  if (!bdayMusic) return;
   if (musicOn) {
-    iframe.src = iframe.src.replace('mute=0','mute=1');
+    bdayMusic.pause();
     if (musicFab) { musicFab.textContent='🎵'; musicFab.classList.remove('on'); }
     musicOn = false;
   } else {
-    iframe.src = iframe.src.replace('mute=1','mute=0');
+    bdayMusic.play();
     if (musicFab) { musicFab.textContent='🔊'; musicFab.classList.add('on'); }
     musicOn = true;
   }
 }
 
-function startMusic() { autoplayMusic(); }
+// Primer toque = arrancar música
+function onFirstTouch() {
+  startMusic();
+  document.removeEventListener('click', onFirstTouch);
+  document.removeEventListener('touchstart', onFirstTouch);
+}
+document.addEventListener('click', onFirstTouch);
+document.addEventListener('touchstart', onFirstTouch);
 
 
 /* ══ PARTÍCULAS ROSAS ══ */
