@@ -11,13 +11,32 @@
   <!-- Canvas fuegos artificiales -->
   <canvas id="fireworks" width="1080" height="948"></canvas>
 
-  <!-- Música MP3 directo — empieza en 3:21 via JS -->
+  <!-- Música MP3 directo -->
   <audio id="bdayMusic" loop preload="auto">
-    <source src="musica.mp3.mp3" type="audio/mpeg">
     <source src="musica.mp3" type="audio/mpeg">
   </audio>
 
-  <button class="music-fab" id="musicFab" onclick="toggleBdayMusic()" title="Música">🎵</button>
+  <!-- Botón play para iOS -->
+  <div id="iosPlay" style="
+    position:fixed; inset:0; z-index:9999;
+    background:rgba(13,0,32,0.92);
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    gap:20px;
+  ">
+    <div style="font-size:3rem; animation:heartbeat 1.1s ease-in-out infinite;">💖</div>
+    <p style="color:#ffb3cc; font-family:Georgia,serif; font-size:1.1rem; letter-spacing:2px;">Toca para abrir tu sorpresa</p>
+    <button onclick="iosStart()" style="
+      padding:18px 44px; font-size:1.1rem;
+      font-family:Georgia,serif; color:#fff;
+      background:linear-gradient(135deg,#ff006e,#ff4d8d);
+      border:none; border-radius:50px; cursor:pointer;
+      box-shadow:0 0 30px rgba(255,0,110,0.6);
+      letter-spacing:1px;
+    ">💖 Abrir 💖</button>
+  </div>
+
+  <button class="music-fab" id="musicFab" onclick="toggleBdayMusic()" title="Música">🔊</button>
 
   <!-- ══════════════════════════════════════
         SECCIÓN 0: CUENTA REGRESIVA

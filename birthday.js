@@ -95,10 +95,22 @@ function startFireworks() {
 }
 
 
-/* ══ MÚSICA - MP3 directo desde 3:21 ══ */
+/* ══ MÚSICA - MP3 directo ══ */
 const musicFab = document.getElementById('musicFab');
 const bdayMusic = document.getElementById('bdayMusic');
 let musicOn = false;
+
+function iosStart() {
+  // Esconder overlay
+  const overlay = document.getElementById('iosPlay');
+  if (overlay) overlay.style.display = 'none';
+  // Arrancar música — llamado directo desde tap del usuario = iOS lo permite
+  bdayMusic.volume = 1.0;
+  bdayMusic.play().then(() => {
+    musicOn = true;
+    if (musicFab) { musicFab.textContent='🔊'; musicFab.classList.add('on'); }
+  }).catch(e => console.log(e));
+}
 
 function startMusic() {
   if (!bdayMusic || musicOn) return;
@@ -123,15 +135,6 @@ function toggleBdayMusic() {
     musicOn = true;
   }
 }
-
-// Primer toque = arrancar música
-function onFirstTouch() {
-  startMusic();
-  document.removeEventListener('click', onFirstTouch);
-  document.removeEventListener('touchstart', onFirstTouch);
-}
-document.addEventListener('click', onFirstTouch);
-document.addEventListener('touchstart', onFirstTouch);
 
 
 /* ══ PARTÍCULAS ROSAS ══ */
