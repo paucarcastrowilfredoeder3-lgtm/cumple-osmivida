@@ -103,16 +103,18 @@ let musicOn = false;
 function startMusic() {
   if (!bdayMusic || musicOn) return;
 
+  // Mutear, cargar, saltar al 3:21, luego desmutear y reproducir
+  bdayMusic.muted = true;
+  bdayMusic.volume = 1.0;
+
   const play = () => {
-    // Forzar el salto al segundo 201
     bdayMusic.currentTime = 201;
-    // Esperar a que el seek termine antes de reproducir
     bdayMusic.addEventListener('seeked', () => {
-      bdayMusic.volume = 1.0;
+      bdayMusic.muted = false;
       bdayMusic.play().then(() => {
         musicOn = true;
         if (musicFab) { musicFab.textContent='🔊'; musicFab.classList.add('on'); }
-      }).catch(e => console.log('audio error:', e));
+      }).catch(e => console.log(e));
     }, { once: true });
   };
 
