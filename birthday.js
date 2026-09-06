@@ -458,3 +458,151 @@ function createRipple(e) {
 // Activar ripple en click y touch
 document.addEventListener('click', createRipple);
 document.addEventListener('touchstart', (e) => createRipple(e), {passive:true});
+
+/* ══ CANVAS FONDO: ESTRELLAS + SATURNO ROSADO ══ */
+(function() {
+  const bg   = document.getElementById('bgCanvas');
+  if (!bg) return;
+  const bctx = bg.getContext('2d');
+
+  function resize() {
+    bg.width  = window.innerWidth;
+    bg.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // ── Estrellas ──
+  class BGStar {
+    constructor() { this.reset(); }
+    reset() {
+      this.x    = Math.random() * bg.width;
+      this.y    = Math.random() * bg.height;
+      this.r    = Math.random() * 1.4 + 0.2;
+      this.tw   = Math.random() * Math.PI * 2;
+      this.spd  = 0.025 + Math.random() * 0.035;
+      this.cross = Math.random() < 0.22;
+      const t = [[255,255,255],[255,210,230],[255,230,150],[200,210,255]];
+      this.col = t[Math.floor(Math.random()*t.length)];
+    }
+    draw() {
+      this.tw += this.spd;
+      const op = 0.15 + Math.abs(Math.sin(this.tw)) * 0.85;
+      const rr = this.r * (0.5 + Math.abs(Math.sin(this.tw)));
+      const [r,g,b] = this.col;
+      if (this.cross) {
+        bctx.save();
+        bctx.translate(this.x, this.y);
+        bctx.globalAlpha = op;
+        const s = rr * 3;
+        const gd = bctx.createRadialGradient(0,0,0,0,0,s);
+        gd.addColorStop(0,`rgba(${r},${g},${b},1)`);
+        gd.addColorStop(1,`rgba(${r},${g},${b},0)`);
+        bctx.fillStyle = gd;
+        bctx.beginPath(); bctx.arc(0,0,s,0,Math.PI*2); bctx.fill();
+        bctx.strokeStyle = `rgba(${r},${g},${b},0.5)`;
+        bctx.lineWidth = 0.6;
+        for (let a=0;a<4;a++) {
+          bctx.beginPath(); bctx.moveTo(0,0);
+          bctx.lineTo(Math.cos(a*Math.PI/2)*s*2.5, Math.sin(a*Math.PI/2)*s*2.5);
+          bctx.stroke();
+        }
+        bctx.restore();
+      } else {
+        bctx.beginPath(); bctx.arc(this.x,this.y,rr,0,Math.PI*2);
+        bctx.fillStyle=`rgba(${r},${g},${b},${op})`; bctx.fill();
+        if (rr > 1.0) {
+          const gd=bctx.createRadialGradient(this.x,this.y,0,this.x,this.y,rr*4);
+          gd.addColorStop(0,`rgba(${r},${g},${b},0.2)`);
+          gd.addColorStop(1,`rgba(${r},${g},${b},0)`);
+          bctx.beginPath(); bctx.arc(this.x,this.y,rr*4,0,Math.PI*2);
+          bctx.fillStyle=gd; bctx.fill();
+        }
+      }
+    }
+  }
+
+  // ── Saturno rosado ──
+  const saturn = {
+    angle: 0,
+    moonAngle: 0,
+    get x() { return bg.width * 0.82; },
+    get y() { return bg.height * 0.18; },
+  };
+
+  function drawSaturn() {
+    const x = saturn.x, y = saturn.y, r = 38;
+
+    // Glow
+    const glow = bctx.createRadialGradient(x,y,0,x,y,r*3.5);
+    glow.addColorStop(0,'rgba(255,100,180,0.25)');
+    glow.addColorStop(1,'rgba(255,100,180,0)');
+    bctx.beginPath(); bctx.arc(x,y,r*3.5,0,Math.PI*2);
+    bctx.fillStyle=glow; bctx.fill();
+
+    // Anillos traseros
+    bctx.save(); bctx.translate(x,y); bctx.scale(1,0.28);
+    bctx.beginPath(); bctx.ellipse(0,0,r*2.3,r*2.3,0,Math.PI,Math.PI*2);
+    bctx.strokeStyle='rgba(255,100,170,0.55)'; bctx.lineWidth=r*0.45; bctx.stroke();
+    bctx.beginPath(); bctx.ellipse(0,0,r*2.9,r*2.9,0,Math.PI,Math.PI*2);
+    bctx.strokeStyle='rgba(255,150,200,0.25)'; bctx.lineWidth=r*0.2; bctx.stroke();
+    bctx.restore();
+
+    // Cuerpo
+    const grad = bctx.createRadialGradient(x-r*0.3,y-r*0.35,r*0.05,x,y,r);
+    grad.addColorStop(0,'#ffaad4');
+    grad.addColorStop(0.5,'#ff4d9d');
+    grad.addColorStop(1,'#c2185b');
+    bctx.beginPath(); bctx.arc(x,y,r,0,Math.PI*2);
+    bctx.fillStyle=grad; bctx.fill();
+
+    // Brillo
+    const shine=bctx.createRadialGradient(x-r*0.35,y-r*0.35,0,x-r*0.35,y-r*0.35,r*0.65);
+    shine.addColorStop(0,'rgba(255,255,255,0.4)');
+    shine.addColorStop(1,'rgba(255,255,255,0)');
+    bctx.beginPath(); bctx.arc(x,y,r,0,Math.PI*2);
+    bctx.fillStyle=shine; bctx.fill();
+
+    // Anillos delanteros
+    bctx.save(); bctx.translate(x,y); bctx.scale(1,0.28);
+    bctx.beginPath(); bctx.ellipse(0,0,r*2.3,r*2.3,0,0,Math.PI);
+    bctx.strokeStyle='rgba(255,100,170,0.55)'; bctx.lineWidth=r*0.45; bctx.stroke();
+    bctx.beginPath(); bctx.ellipse(0,0,r*2.9,r*2.9,0,0,Math.PI);
+    bctx.strokeStyle='rgba(255,150,200,0.25)'; bctx.lineWidth=r*0.2; bctx.stroke();
+    bctx.restore();
+
+    // Luna pequeña
+    saturn.moonAngle += 0.008;
+    const mx = x + Math.cos(saturn.moonAngle)*r*2.5;
+    const my = y + Math.sin(saturn.moonAngle)*r*1.1;
+    bctx.beginPath(); bctx.arc(mx,my,r*0.2,0,Math.PI*2);
+    bctx.fillStyle='rgba(255,220,240,0.9)'; bctx.fill();
+  }
+
+  // ── Stars init ──
+  let stars = [];
+  function initStars() {
+    stars = [];
+    const n = Math.min(Math.floor(bg.width*bg.height/2200), 280);
+    for (let i=0;i<n;i++) stars.push(new BGStar());
+  }
+  initStars();
+  window.addEventListener('resize', initStars);
+
+  // ── Loop ──
+  function bgLoop() {
+    bctx.clearRect(0,0,bg.width,bg.height);
+
+    // Fondo degradado
+    const grad=bctx.createRadialGradient(bg.width*.5,bg.height*.4,0,bg.width*.5,bg.height*.5,Math.max(bg.width,bg.height));
+    grad.addColorStop(0,'#1a0030');
+    grad.addColorStop(0.5,'#0d0020');
+    grad.addColorStop(1,'#050008');
+    bctx.fillStyle=grad; bctx.fillRect(0,0,bg.width,bg.height);
+
+    drawSaturn();
+    stars.forEach(s=>s.draw());
+    requestAnimationFrame(bgLoop);
+  }
+  bgLoop();
+})();
